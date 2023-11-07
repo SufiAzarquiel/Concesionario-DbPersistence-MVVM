@@ -1,0 +1,91 @@
+﻿<Window x:Class="Concesionario_DbPersistence_MVVM.view.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Concesionario_DbPersistence_MVVM.view"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="350" Width="525">
+    <Window.Resources>
+        <DataTemplate x:Key="DataTemplate1">
+            <StackPanel Height="59" Width="326" >
+                <TextBlock HorizontalAlignment="Left" Height="28" TextWrapping="Wrap" Text="{Binding Isbn}" Width="326"/>
+                <TextBlock HorizontalAlignment="Left" Height="32" Margin="2,0,0,0" TextWrapping="Wrap" Text="{Binding Titulo}" Width="324"/>
+            </StackPanel>
+        </DataTemplate>
+    </Window.Resources>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1.5*"></ColumnDefinition>
+            <!--En esta fila va el ListBox-->
+            <ColumnDefinition Width="3*"></ColumnDefinition>
+            <!--Aqui va un grid secundario-->
+        </Grid.ColumnDefinitions>
+        <ListBox Background="LightGray" Margin="7" ItemsSource="{Binding ListaLibros}" ItemTemplate="{DynamicResource DataTemplate1}" SelectedItem="{Binding LibroSeleccionado}" ></ListBox>
+
+        <!--Grid secundario  de 3 filas x 1 columna-->
+        <Grid Grid.Column="1" Background="LightGreen" Margin="0,7,7,7">
+
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"></RowDefinition>
+                <!--En esta fila va el Grid de detalles de contacto-->
+                <RowDefinition Height="Auto"></RowDefinition>
+                <!-- fila para un grid uniforme donde estan anidados los botones nuevo, modificar y eliminar-->
+                <RowDefinition Height="Auto"></RowDefinition>
+                <!-- fila para un grid uniforme donde estan anidados los botones guardar, actualizar y cancelar-->
+            </Grid.RowDefinitions>
+
+
+            <!--Grid detalles de contacto-->
+            <Grid Name="gridDetallesDeContacto" Grid.Row="0" Margin="7" Background="Bisque" >
+
+
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"></RowDefinition>
+                    <RowDefinition Height="Auto"></RowDefinition>
+                    <RowDefinition Height="Auto"></RowDefinition>
+                    <RowDefinition Height="Auto"></RowDefinition>
+                    <RowDefinition Height="*"></RowDefinition>
+                </Grid.RowDefinitions>
+
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"></ColumnDefinition>
+                    <ColumnDefinition Width="*"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Margin="5">TITULO:</TextBlock>
+                <TextBox Grid.Column="1" Margin="5" 
+                         Text="{Binding Titulo, Mode=TwoWay}" IsEnabled="{Binding ActivarControlT}"/>
+
+                <TextBlock Margin="5" Grid.Row="1">ISBN:</TextBlock>
+                <TextBox Grid.Column="1" Grid.Row="1" Margin="5" 
+                         Text="{Binding ISBN}" IsEnabled="{Binding ActivarControlT}"/>
+
+                <TextBlock Margin="5" Grid.Row="2">AUTOR:</TextBlock>
+                <TextBox Grid.Column="1" Grid.Row="2" Margin="5" 
+                         Text="{Binding Autor}" IsEnabled="{Binding ActivarControlT}"/>
+
+                <TextBlock Margin="5" Grid.Row="3">EDITORIAL:</TextBlock>
+                <TextBox Grid.Column="1" Grid.Row="3" Margin="5" 
+                         Text="{Binding Editorial}" DataContext="{Binding}" IsEnabled="{Binding ActivarControlT}"/>
+            </Grid>
+            <!--Grid uniforme donde estan anidados los botones nuevo, modificar y eliminar-->
+            <UniformGrid Grid.Row="1" Background="Blue" Margin="7,0,7,7" Columns="3" Name="uGridNuevoModificarEliminar">
+                <Button Margin="3" Padding="3" Name="btnNuevo" IsEnabled="{Binding ActivarControlB1}" Command="{Binding ComandoNuevo}">Nuevo</Button>
+                <Button Margin="3" Padding="3" Name="btnModificar" IsEnabled="{Binding ActivarControlB2}" Command="{Binding ComandoModificar}">Modificar</Button>
+                <Button Margin="3" Padding="3" IsEnabled="{Binding ActivarControlB3}" Command="{Binding ComandoEliminar}">Eliminar</Button>
+            </UniformGrid>
+
+            <!--Grid uniforme donde estan anidados los botones guardar, actualizar y cancelar-->
+            <UniformGrid Grid.Row="2" Background="red" Margin="7,0,7,7" Columns="3" Name="uGridGuardarActualizarCancelar">
+                <Button Margin="3" Padding="1" Name="btnGuardar" IsEnabled="{Binding ActivarControlB4}" Command="{Binding ComandoGuardar}">Guardar</Button>
+                <Button Margin="3" Padding="3" Name="btnActualizar" IsEnabled="{Binding ActivarControlB5}" Command="{Binding ComandoActualizar}">Actualizar</Button>
+                <Button Margin="3" Padding="3" Name="btnCancelar" IsEnabled="{Binding ActivarControlB6}" Command="{Binding ComandoCancelar}">Cancelar</Button>
+            </UniformGrid>
+
+
+        </Grid>
+
+
+    </Grid>
+</Window>
