@@ -6,11 +6,14 @@
         xmlns:local="clr-namespace:Concesionario_DbPersistence_MVVM.view"
         mc:Ignorable="d"
         Title="MainWindow" Height="350" Width="525">
+    <!-- 
+    xmlns:local="clr-namespace:Concesionario_DbPersistence_MVVM.view" xmlns:viewmodel="clr-namespace:Concesionario_DbPersistence_MVVM" xmlns:viewmodel1="clr-namespace:Concesionario_DbPersistence_MVVM.viewmodel" d:DataContext="{d:DesignInstance Type=viewmodel1:MainViewModel}"
+    -->
     <Window.Resources>
-        <DataTemplate x:Key="DataTemplate1">
+        <DataTemplate x:Key="DataTemplateCar">
             <StackPanel Height="59" Width="326" >
-                <TextBlock HorizontalAlignment="Left" Height="28" TextWrapping="Wrap" Text="{Binding Isbn}" Width="326"/>
-                <TextBlock HorizontalAlignment="Left" Height="32" Margin="2,0,0,0" TextWrapping="Wrap" Text="{Binding Titulo}" Width="324"/>
+                <TextBlock HorizontalAlignment="Left" Height="28" TextWrapping="Wrap" Text="{Binding Brand}" Width="326"/>
+                <TextBlock HorizontalAlignment="Left" Height="32" Margin="2,0,0,0" TextWrapping="Wrap" Text="{Binding Model}" Width="324"/>
             </StackPanel>
         </DataTemplate>
     </Window.Resources>
@@ -21,7 +24,7 @@
             <ColumnDefinition Width="3*"></ColumnDefinition>
             <!--Aqui va un grid secundario-->
         </Grid.ColumnDefinitions>
-        <ListBox Background="LightGray" Margin="7" ItemsSource="{Binding ListaLibros}" ItemTemplate="{DynamicResource DataTemplate1}" SelectedItem="{Binding LibroSeleccionado}" ></ListBox>
+        <ListBox Background="LightGray" Margin="7" ItemsSource="{Binding CarList}" ItemTemplate="{DynamicResource DataTemplateCar}" SelectedItem="{Binding SelectedCar}" ></ListBox>
 
         <!--Grid secundario  de 3 filas x 1 columna-->
         <Grid Grid.Column="1" Background="LightGreen" Margin="0,7,7,7">
@@ -37,10 +40,12 @@
 
 
             <!--Grid detalles de contacto-->
-            <Grid Name="gridDetallesDeContacto" Grid.Row="0" Margin="7" Background="Bisque" >
+            <Grid Name="gridCarDetails" Grid.Row="0" Margin="7" Background="Bisque" >
 
 
                 <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"></RowDefinition>
+                    <RowDefinition Height="Auto"></RowDefinition>
                     <RowDefinition Height="Auto"></RowDefinition>
                     <RowDefinition Height="Auto"></RowDefinition>
                     <RowDefinition Height="Auto"></RowDefinition>
@@ -53,34 +58,42 @@
                     <ColumnDefinition Width="*"></ColumnDefinition>
                 </Grid.ColumnDefinitions>
 
-                <TextBlock Margin="5">TITULO:</TextBlock>
+                <TextBlock Margin="5">BRAND:</TextBlock>
                 <TextBox Grid.Column="1" Margin="5" 
-                         Text="{Binding Titulo, Mode=TwoWay}" IsEnabled="{Binding ActivarControlT}"/>
+                         Text="{Binding Brand, Mode=TwoWay}" IsEnabled="{Binding ControlText}"/>
 
-                <TextBlock Margin="5" Grid.Row="1">ISBN:</TextBlock>
+                <TextBlock Margin="5" Grid.Row="1">MODEL:</TextBlock>
                 <TextBox Grid.Column="1" Grid.Row="1" Margin="5" 
-                         Text="{Binding ISBN}" IsEnabled="{Binding ActivarControlT}"/>
+                         Text="{Binding Model, Mode=TwoWay}" DataContext="{Binding}" IsEnabled="{Binding ControlText}"/>
 
-                <TextBlock Margin="5" Grid.Row="2">AUTOR:</TextBlock>
+                <TextBlock Margin="5" Grid.Row="2">ENGINE:</TextBlock>
                 <TextBox Grid.Column="1" Grid.Row="2" Margin="5" 
-                         Text="{Binding Autor}" IsEnabled="{Binding ActivarControlT}"/>
+                         Text="{Binding EngineType, Mode=TwoWay}" DataContext="{Binding}" IsEnabled="{Binding ControlText}"/>
 
-                <TextBlock Margin="5" Grid.Row="3">EDITORIAL:</TextBlock>
+                <TextBlock Margin="5" Grid.Row="3">STOCK:</TextBlock>
                 <TextBox Grid.Column="1" Grid.Row="3" Margin="5" 
-                         Text="{Binding Editorial}" DataContext="{Binding}" IsEnabled="{Binding ActivarControlT}"/>
+                         Text="{Binding Stock, Mode=TwoWay}" DataContext="{Binding}" IsEnabled="{Binding ControlText}"/>
+
+                <TextBlock Margin="5" Grid.Row="4">YEAR:</TextBlock>
+                <TextBox Grid.Column="1" Grid.Row="4" Margin="5" 
+                         Text="{Binding Year, Mode=TwoWay}" DataContext="{Binding}" IsEnabled="{Binding ControlText}"/>
+
+                <TextBlock Margin="5" Grid.Row="5">PRICE:</TextBlock>
+                <TextBox Grid.Column="1" Grid.Row="5" Margin="5" 
+                         Text="{Binding Price, Mode=TwoWay}" DataContext="{Binding}" IsEnabled="{Binding ControlText}"/>
             </Grid>
             <!--Grid uniforme donde estan anidados los botones nuevo, modificar y eliminar-->
-            <UniformGrid Grid.Row="1" Background="Blue" Margin="7,0,7,7" Columns="3" Name="uGridNuevoModificarEliminar">
-                <Button Margin="3" Padding="3" Name="btnNuevo" IsEnabled="{Binding ActivarControlB1}" Command="{Binding ComandoNuevo}">Nuevo</Button>
-                <Button Margin="3" Padding="3" Name="btnModificar" IsEnabled="{Binding ActivarControlB2}" Command="{Binding ComandoModificar}">Modificar</Button>
-                <Button Margin="3" Padding="3" IsEnabled="{Binding ActivarControlB3}" Command="{Binding ComandoEliminar}">Eliminar</Button>
+            <UniformGrid Grid.Row="1" Background="Blue" Margin="7,0,7,7" Columns="3" Name="uGridNewModifyDelete">
+                <Button Margin="3" Padding="3" Name="btnNew" IsEnabled="{Binding ControlB1}" Command="{Binding New}">New</Button>
+                <Button Margin="3" Padding="3" Name="btnModify" IsEnabled="{Binding ControlB2}" Command="{Binding Modify}">Modify</Button>
+                <Button Margin="3" Padding="3" IsEnabled="{Binding ControlB3}" Command="{Binding Delete}">Delete</Button>
             </UniformGrid>
 
             <!--Grid uniforme donde estan anidados los botones guardar, actualizar y cancelar-->
-            <UniformGrid Grid.Row="2" Background="red" Margin="7,0,7,7" Columns="3" Name="uGridGuardarActualizarCancelar">
-                <Button Margin="3" Padding="1" Name="btnGuardar" IsEnabled="{Binding ActivarControlB4}" Command="{Binding ComandoGuardar}">Guardar</Button>
-                <Button Margin="3" Padding="3" Name="btnActualizar" IsEnabled="{Binding ActivarControlB5}" Command="{Binding ComandoActualizar}">Actualizar</Button>
-                <Button Margin="3" Padding="3" Name="btnCancelar" IsEnabled="{Binding ActivarControlB6}" Command="{Binding ComandoCancelar}">Cancelar</Button>
+            <UniformGrid Grid.Row="2" Background="red" Margin="7,0,7,7" Columns="3" Name="uGridSaveUpdateCancel">
+                <Button Margin="3" Padding="1" Name="btnSave" IsEnabled="{Binding ControlB4}" Command="{Binding Save}">Save</Button>
+                <Button Margin="3" Padding="3" Name="btnUpdate" IsEnabled="{Binding ControlB5}" Command="{Binding Update}">Update</Button>
+                <Button Margin="3" Padding="3" Name="btnCancel" IsEnabled="{Binding ControlB6}" Command="{Binding Cancel}">Cancel</Button>
             </UniformGrid>
 
 

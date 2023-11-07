@@ -22,6 +22,8 @@ namespace Concesionario_DbPersistence_MVVM.view
         public MainWindow()
         {
             InitializeComponent();
+
+            DataContext = new Concesionario_DbPersistence_MVVM.viewmodel.MainViewModel();
         }
     }
 }

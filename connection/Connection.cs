@@ -14,7 +14,6 @@ namespace Concesionario_DbPersistence_MVVM.connection
         //private string cadenaConexion = Server=tcp:dam2023-di.database.windows.net,1433;Initial Catalog=prueba1;Persist Security Info=False;User ID=usuario;Password={your_password};MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30";
 
         private string connectionStr = "Server=tcp:sufis2dam.database.windows.net,1433;Initial Catalog=sufi-ui-s2dam;Persist Security Info=False;User ID=sufiadmin;Password=tomas000-;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30";
-
         // Variables para recuperar información de la Base de datos
         //private OleDbConnection CN;
         //private OleDbCommand CMD;
@@ -55,7 +54,7 @@ namespace Concesionario_DbPersistence_MVVM.connection
                     currentCar.Model = (string)RDR["model"];
                     // Get engine from DB
                     // From type <public enum Engine { Gasoline, Diesel, Hybrid, Electric };>
-                    string engine = (string)RDR["engine"];
+                    string engine = (string)RDR["enginetype"];
                     switch (engine)
                     {
                         case "Gasoline":
@@ -104,7 +103,7 @@ namespace Concesionario_DbPersistence_MVVM.connection
             CMD.CommandType = CommandType.Text;
 
 
-            CMD.CommandText = "INSERT INTO Cars (brand, model, engine, stock, price, year) VALUES (@p1,@p2,@p3,@p4,@p5,@p6);";
+            CMD.CommandText = "INSERT INTO Cars (brand, model, enginetype, stock, price, year) VALUES (@p1,@p2,@p3,@p4,@p5,@p6);";
 
 
             //// establecemos los valores que tomarán los parámetros de la instrucción OleDb.
@@ -166,11 +165,22 @@ namespace Concesionario_DbPersistence_MVVM.connection
             string model,
             string engine,
             int stock,
-            double price)
+            double price,
+            int year)
         {
             CN = new SqlConnection(connectionStr);
-            CMD = new SqlCommand("UPDATE Cars SET brand = @p1, model = @p2, engine = @p3, stock = @p4, price = @p5, year = @p6" +
-                "WHERE brand = @p1 AND model = @p2", CN);
+            CMD = new SqlCommand("UPDATE Cars" + 
+                " SET brand = @p1, model = @p2, enginetype = @p3, stock = @p4, price = @p5, year = @p6" +
+                " WHERE brand = @p1 AND model = @p2", CN);
+
+            // set values for every parameter
+            CMD.Parameters.AddWithValue("@p1", brand);
+            CMD.Parameters.AddWithValue("@p2", model);
+            CMD.Parameters.AddWithValue("@p3", engine);
+            CMD.Parameters.AddWithValue("@p4", stock);
+            CMD.Parameters.AddWithValue("@p5", price);
+            CMD.Parameters.AddWithValue("@p6", year);
+
             CMD.CommandType = CommandType.Text;
             try
             {

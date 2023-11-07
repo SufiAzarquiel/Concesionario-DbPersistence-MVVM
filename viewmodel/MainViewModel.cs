@@ -42,12 +42,12 @@ namespace Concesionario_DbPersistence_MVVM.viewmodel
             ControlB2 = true;
             ControlB3 = true;
 
-            New = new Command(AccionNuevo);
-            Save = new Command(AccionGuardar);
-            Delete = new Command(AccionEliminar);
-            Modify = new Command(AccionModificar);
-            Update = new Command(AccionActualizar);
-            Cancel = new Command(AccionCancelar);
+            New = new Command(ActionNew);
+            Save = new Command(ActionSave);
+            Delete = new Command(ActionDelete);
+            Modify = new Command(ActionModify);
+            Update = new Command(ActionUpdate);
+            Cancel = new Command(ActionCancel);
 
 
         }
@@ -145,15 +145,15 @@ namespace Concesionario_DbPersistence_MVVM.viewmodel
             }
         }
 
-        private bool controlAll;
+        private bool controlText;
 
-        public bool ControlAll
+        public bool ControlText
         {
-            get { return controlAll; }
+            get { return controlText; }
             set
             {
-                controlAll = value;
-                OnPropertyChanged("ControlAll");
+                controlText = value;
+                OnPropertyChanged("ControlText");
             }
         }
 
@@ -226,10 +226,10 @@ namespace Concesionario_DbPersistence_MVVM.viewmodel
         }
 
 
-        private void AccionNuevo(object parametro)
+        private void ActionNew(object parameter)
         {
 
-            ControlAll = true;
+            ControlText = true;
 
             ControlB1 = false;
             ControlB2 = false;
@@ -239,20 +239,22 @@ namespace Concesionario_DbPersistence_MVVM.viewmodel
             ControlB6 = true;
 
 
-            Titulo = "";
-            ISBN = "";
-            Autor = "";
-            Editorial = "";
+            Brand = "";
+            Model = "";
+            EngineType = Car.Engine.Gasoline;
+            Stock = 0;
+            Price = 0;
+            Year = 0;
 
 
         }
 
-        private void AccionEliminar(object parametro)
+        private void ActionDelete(object parameter)
         {
             if (SelectedCar != null)
             {
-                MessageBoxResult ss = MessageBox.Show("¿Seguro que desea eliminar el LIBRO seleccionado?",
-                        "Confirmar eliminacion de registro", MessageBoxButton.YesNo,
+                MessageBoxResult ss = MessageBox.Show("Are you sure you want to delete the selected CAR?",
+                        "Confirm record deletion", MessageBoxButton.YesNo,
                         MessageBoxImage.Warning);
                 if (ss == MessageBoxResult.Yes)
                 //if (MessageBox.Show("¿Seguro que desea eliminar el LIBRO seleccionado?",
@@ -260,13 +262,11 @@ namespace Concesionario_DbPersistence_MVVM.viewmodel
                 //       MessageBoxImage.Warning) == MessageBoxResult.Yes) // Si al mostrar el cuadro de diálogo el usuario presiona el botón "yes" ...
                 {
 
-                    int resultado = 0;
+                    int result = 0;
 
                     try
                     {
-
-
-                        resultado = dataConnection.DeleteCar(ISBN);
+                        result = dataConnection.DeleteCar(Brand, Model);
 
                     }
                     catch (Exception ex)
@@ -274,15 +274,17 @@ namespace Concesionario_DbPersistence_MVVM.viewmodel
                         MessageBox.Show(ex.Message);
                     }
 
-                    if (resultado > 0)// Por que afectó a un registro
+                    if (result > 0)// Por que afectó a un registro
                     {
 
                         CarList.Remove(SelectedCar);
 
-                        Titulo = "";
-                        Autor = "";
-                        ISBN = "";
-                        Editorial = "";
+                        Brand = "";
+                        Model = "";
+                        EngineType = Car.Engine.Gasoline;
+                        Stock = 0;
+                        Price = 0;
+                        Year = 0;
 
                     }
                 }
@@ -291,18 +293,18 @@ namespace Concesionario_DbPersistence_MVVM.viewmodel
             }
             else
             {
-                MessageBox.Show("Tienes que seleccionar un LIBRO de la lista para poder borrarlo",
-                    "Información", MessageBoxButton.OK, MessageBoxImage.Information);
+                MessageBox.Show("To delete a CAR, select one first.",
+                    "Info", MessageBoxButton.OK, MessageBoxImage.Information);
             }
 
         }
 
-        private void AccionModificar(object parametro)
+        private void ActionModify(object parameter)
         {
 
             if (SelectedCar != null)
             {
-                ControlAll = true;
+                ControlText = true;
 
                 ControlB1 = false;
                 ControlB2 = false;
@@ -314,37 +316,34 @@ namespace Concesionario_DbPersistence_MVVM.viewmodel
             }
             else
             {
-                //MessageBox.Show("Tienes que seleccionar un LIBRO de la lista para poder modificarlo",
-                //    "Información", MessageBoxButton.OK, MessageBoxImage.Information);
-
-                MessageBox.Show("Tienes que seleccionar un LIBRO de la lista para poder modificarlo");
+                MessageBox.Show("To modify a CAR, select one first.");
             }
 
 
         }
 
-        private void AccionActualizar(object parametro)
+        private void ActionUpdate(object parameter)
         {
 
             try
             {
 
 
-                int resultado = 0;
+                int result = 0;
+
+                result = dataConnection.UpdateExistingCar(Brand, Model, EngineType.ToString(), Stock, Price, Year);
 
 
-                resultado = dataConnection.UpdateExistingBook(Titulo, ISBN,
-                    Autor, Editorial);
-
-
-                if (resultado > 0) // si se actualizó el registro en la tabla ...
+                if (result > 0) // si se actualizó el registro en la tabla ...
                 {
-                    MessageBox.Show("Libro modificado", "Información", MessageBoxButton.OK, MessageBoxImage.Information);
+                    MessageBox.Show("CAR modified", "Info", MessageBoxButton.OK, MessageBoxImage.Information);
 
 
                     // Actualizamos Listalibros para actualizar el ListBox
-                    CarList = dataConnection.ObtenerLibros();
-
+                    CarList = dataConnection.GetCars();
+                } else
+                {
+                    MessageBox.Show("CAR not modified!", "Info", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
             catch (Exception ex)
@@ -354,7 +353,7 @@ namespace Concesionario_DbPersistence_MVVM.viewmodel
 
             finally
             {
-                ControlAll = false;
+                ControlText = false;
 
                 ControlB1 = true;
                 ControlB2 = true;
@@ -371,25 +370,27 @@ namespace Concesionario_DbPersistence_MVVM.viewmodel
         }
 
 
-        private void AccionGuardar(object parametro)
+        private void ActionSave(object parameter)
         {
-            Car nuevoLibro;
+            Car newCar;
 
 
 
             try
             {
 
-                nuevoLibro = new Car();
+                newCar = new Car();
 
-                nuevoLibro.Titulo = Titulo;
-                nuevoLibro.Isbn = ISBN;
-                nuevoLibro.Autor = Autor;
-                nuevoLibro.Editorial = Editorial;
+                newCar.Brand = Brand;
+                newCar.Model = Model;
+                newCar.EngineType = EngineType;
+                newCar.Stock = Stock;
+                newCar.Price = Price;
+                newCar.Year = Year;
 
-                dataConnection.GuardarNuevoLibro(nuevoLibro);
+                dataConnection.SaveNewCar(newCar);
 
-                CarList.Add(nuevoLibro);
+                CarList.Add(newCar);
 
 
 
@@ -401,7 +402,7 @@ namespace Concesionario_DbPersistence_MVVM.viewmodel
 
             finally
             {
-                ControlAll = false;
+                ControlText = false;
 
                 ControlB1 = true;
                 ControlB2 = true;
@@ -415,17 +416,19 @@ namespace Concesionario_DbPersistence_MVVM.viewmodel
 
         }
 
-        private void AccionCancelar(object parametro)
+        private void ActionCancel(object parameter)
         {
 
             SelectedCar = null;
 
-            Titulo = "";
-            ISBN = "";
-            Autor = "";
-            Editorial = "";
+            Brand = "";
+            Model = "";
+            EngineType = Car.Engine.Gasoline;
+            Stock = 0;
+            Price = 0;
+            Year = 0;
 
-            ControlAll = false;
+            ControlText = false;
             ControlB1 = true;
             ControlB2 = true;
             ControlB3 = true;
