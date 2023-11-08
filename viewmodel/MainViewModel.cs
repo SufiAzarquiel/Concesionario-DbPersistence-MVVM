@@ -1,8 +1,11 @@
 ﻿using Concesionario_DbPersistence_MVVM.connection;
 using Concesionario_DbPersistence_MVVM.model;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
+using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 
@@ -78,7 +81,7 @@ namespace Concesionario_DbPersistence_MVVM.viewmodel
                 {
                     Brand = selectedCar.Brand;
                     Model = selectedCar.Model;
-                    EngineType = selectedCar.EngineType;
+                    SelectedEngine = selectedCar.EngineType;
                     Stock = selectedCar.Stock;
                     Price = selectedCar.Price;
                     Year = selectedCar.Year;
@@ -87,7 +90,6 @@ namespace Concesionario_DbPersistence_MVVM.viewmodel
         }
 
         private string brand, model;
-        private Car.Engine engineType;
         private int stock, year;
         private double price;
         public string Brand
@@ -108,15 +110,22 @@ namespace Concesionario_DbPersistence_MVVM.viewmodel
                 OnPropertyChanged("Model");
             }
         }
-        public Car.Engine EngineType
+
+        // COMBOBOX
+        public List<Car.Engine> EngineTypes { get; } = Enum.GetValues(typeof(Car.Engine)).OfType<Car.Engine>().ToList();
+
+        private Car.Engine selectedEngine;
+        public Car.Engine SelectedEngine
         {
-            get { return engineType; }
+            get { return selectedEngine; }
             set
             {
-                engineType = value;
-                OnPropertyChanged("EngineType");
+                selectedEngine = value;
+                Debug.WriteLine(selectedEngine);
+                OnPropertyChanged("SelectedEngine");
             }
         }
+
         public int Stock
         {
             get { return stock; }
@@ -241,7 +250,7 @@ namespace Concesionario_DbPersistence_MVVM.viewmodel
 
             Brand = "";
             Model = "";
-            EngineType = Car.Engine.Gasoline;
+            SelectedEngine = Car.Engine.Gasoline;
             Stock = 0;
             Price = 0;
             Year = 0;
@@ -281,7 +290,7 @@ namespace Concesionario_DbPersistence_MVVM.viewmodel
 
                         Brand = "";
                         Model = "";
-                        EngineType = Car.Engine.Gasoline;
+                        SelectedEngine = Car.Engine.Gasoline;
                         Stock = 0;
                         Price = 0;
                         Year = 0;
@@ -331,7 +340,7 @@ namespace Concesionario_DbPersistence_MVVM.viewmodel
 
                 int result = 0;
 
-                result = dataConnection.UpdateExistingCar(Brand, Model, EngineType.ToString(), Stock, Price, Year);
+                result = dataConnection.UpdateExistingCar(Brand, Model, SelectedEngine.ToString(), Stock, Price, Year);
 
 
                 if (result > 0) // si se actualizó el registro en la tabla ...
@@ -341,7 +350,8 @@ namespace Concesionario_DbPersistence_MVVM.viewmodel
 
                     // Actualizamos Listalibros para actualizar el ListBox
                     CarList = dataConnection.GetCars();
-                } else
+                }
+                else
                 {
                     MessageBox.Show("CAR not modified!", "Info", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
@@ -383,7 +393,7 @@ namespace Concesionario_DbPersistence_MVVM.viewmodel
 
                 newCar.Brand = Brand;
                 newCar.Model = Model;
-                newCar.EngineType = EngineType;
+                newCar.EngineType = SelectedEngine;
                 newCar.Stock = Stock;
                 newCar.Price = Price;
                 newCar.Year = Year;
@@ -423,7 +433,7 @@ namespace Concesionario_DbPersistence_MVVM.viewmodel
 
             Brand = "";
             Model = "";
-            EngineType = Car.Engine.Gasoline;
+            SelectedEngine = Car.Engine.Gasoline;
             Stock = 0;
             Price = 0;
             Year = 0;

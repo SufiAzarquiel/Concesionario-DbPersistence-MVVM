@@ -67,8 +67,11 @@
                          Text="{Binding Model, Mode=TwoWay}" DataContext="{Binding}" IsEnabled="{Binding ControlText}"/>
 
                 <TextBlock Margin="5" Grid.Row="2">ENGINE:</TextBlock>
-                <TextBox Grid.Column="1" Grid.Row="2" Margin="5" 
-                         Text="{Binding EngineType, Mode=TwoWay}" DataContext="{Binding}" IsEnabled="{Binding ControlText}"/>
+                <ComboBox Grid.Column="1" Grid.Row="2" Margin="5" 
+                          ItemsSource="{Binding EngineTypes}" 
+                          SelectedItem="{Binding SelectedEngine, Mode=TwoWay}" 
+                          IsEnabled="{Binding ControlText}" />
+
 
                 <TextBlock Margin="5" Grid.Row="3">STOCK:</TextBlock>
                 <TextBox Grid.Column="1" Grid.Row="3" Margin="5" 
