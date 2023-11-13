@@ -388,6 +388,12 @@ namespace Concesionario_DbPersistence_MVVM.viewmodel
 
             try
             {
+                // Alert if fields are empty
+                if (Stock == 0 || Price == 0 || Year == 0)
+                {
+                    MessageBox.Show("Please fill all the fields.");
+                    return;
+                }
 
                 newCar = new Car();
 
